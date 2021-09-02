@@ -1,35 +1,74 @@
+/*
+ * Draw triangle using Vulkan APIs
+ * Author : Sourabh Goel
+ * Date   : 3 September 2021
+ */
+
+//GLFW will include its own definitions and automatically load the Vulkan header
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
-
 #include <iostream>
+#include <stdexcept>    // Error-handling library
+#include <cstdlib>      // Provides the EXIT_SUCCESS and EXIT_FAILURE macros
 
-int main() {
-    glfwInit();
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Vulkan window", nullptr, nullptr);
-
-    uint32_t extensionCount = 0;
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-    std::cout << extensionCount << " extensions supported\n";
-
-    glm::mat4 matrix;
-    glm::vec4 vec;
-    auto test = matrix * vec;
-
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
+class HelloTriangleApplication {
+public:
+    void run() {
+        initWindow();
+        initVulkan();
+        mainLoop();
+        cleanup();
     }
 
-    glfwDestroyWindow(window);
+private:
+    GLFWwindow* window;
 
-    glfwTerminate();
+    void initWindow() {
+        // Initialize the GLFW library
+        glfwInit();
 
-    return 0;
+        // Not create an OpenGL context with a subsequent call
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        // Disable resizing of the window
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+        // Create an actual window
+        window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan Window", nullptr, nullptr);
+
+    }
+
+    void initVulkan() {
+
+    }
+
+    void mainLoop() {
+        // Checks for events like pressing the X button until the window has been closed by the user
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
+        }
+    }
+
+    void cleanup() {
+        // Destroying and terminating GLFW
+        glfwDestroyWindow(window);
+        glfwTerminate();
+    }
+};
+
+int main() {
+    HelloTriangleApplication app;
+
+    try {
+        app.run();
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
